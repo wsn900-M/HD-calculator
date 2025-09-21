@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Peds HD SI Calculator</title>
+<style>
+  :root{
+    --bg:#191a20;          /* soft dark */
+    --panel:#20222b;
+    --panel-2:#232633;
+    --text:#ececf1;
+    --muted:#b9bdc9;
+    --lav:#b57edc;         /* lavender accent */
+    --lav-2:#c6a6ea;
+    --ok-bg:#163a2e;
+    --ok-fg:#9fe3c0;
+    --warn-bg:#3e2b22;
+    --warn-fg:#ffd599;
+    --border:#2c2f3a;
+    --chip:#292c37;
+    --chip-hover:#323648;
+    --focus: 0 0 0 3px rgba(181,126,220,0.35);
+    --radius:14px;
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:linear-gradient(180deg,#1b1c23 0%, #181922 100%);
+    color:var(--text);
+    font-family:system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:16px;
+  }
+  .container{
+    max-width:980px;
+    margin:0 auto;
+  }
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px;
+  }
+  h1{
+    font-size:1.1rem; font-weight:700; margin:0;
+    letter-spacing:.2px;
+  }
+  .sub{color:var(--muted); font-size:.85rem}
+  .grid{
+    display:grid; gap:14px; grid-template-columns:1fr;
+  }
+  @media (min-width:700px){
+    .grid{ grid-template-columns:1fr 1fr; }
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:14px;
+    box-shadow:0 6px 20px rgba(0,0,0,.25);
+  }
+  label{
+    display:block; font-size:.86rem; color:var(--muted);
+    margin:10px 0 6px;
+  }
+  input, select, button{
+    width:100%;
+    font-size:1rem;
+    color:var(--text);
+    background:#1f2030;
+    border:1px solid var(--border);
+    border-radius:11px;
+    padding:12px 12px;
+    outline:none;
+    -webkit-appearance:none;
+    appearance:none;
+  }
+  /* keep native select UI on iOS: do not override aggressively */
+  select{ background:#1f2030; }
+  input::placeholder{ color:#76809a; }
+  input:focus, select:focus{ box-shadow: var(--focus); border-color:#5f4a7f; }
+  .row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .chips{ display:flex; flex-wrap:wrap; gap:8px; margin:8px 0 4px; }
+  .chip{
+    user-select:none; -webkit-tap-highlight-color:transparent;
+    padding:8px 10px; border-radius:999px; font-size:.9rem;
+    background:var(--chip); border:1px solid var(--border); cursor:pointer;
+  }
+  .chip:active, .chip:hover{ background:var(--chip-hover); }
+  .btn{
+    background:linear-gradient(180deg, var(--lav), var(--lav-2));
+    color:#191724; font-weight:600; border:none;
+  }
+  .btn:active{ filter:brightness(.95); }
+  .hint{ font-size:.8rem; color:var(--muted); margin-top:6px }
+  .specs{
+    margin-top:10px; border-top:1px dashed #2d3040; padding-top:10px;
+    display:grid; gap:6px; font-size:.95rem;
+  }
+  .specs div span{ color:var(--muted) }
+  .outputs.card{ background:var(--panel-2) }
+  .out{
+    display:grid; grid-template-columns:1fr auto; gap:10px;
+    padding:10px 0; border-bottom:1px dashed #2d3040;
+  }
+  .out:last-child{ border-bottom:none }
+  .out label{ margin:0; color:var(--muted) }
+  .val{ font-variant-numeric:tabular-nums; letter-spacing:.3px }
+  .banner{
+    margin-top:12px; padding:10px 12px; border-radius:11px; font-size:.93rem;
+    border:1px solid transparent;
+  }
+  .banner.green{ background:var(--ok-bg); color:var(--ok-fg); border-color:#225846; }
+  .banner.amber{ background:var(--warn-bg); color:var(--warn-fg); border-color:#6b4a37; }
+  .legend{
+    margin-top:14px; font-size:.8rem; color:var(--muted);
+    text-align:center;
+  }
+  .accent{ color:var(--lav-2); font-weight:600 }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>First HD (Peds) – SI Calculator</h1>
+      <div class="sub">Lavender dark • iPhone-friendly • Minutes output</div>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <div class="row">
+          <div>
+            <label for="height">Height (cm)</label>
+            <input id="height" type="number" inputmode="decimal" placeholder="e.g., 120">
+          </div>
+          <div>
+            <label for="weight">Weight (kg)</label>
+            <input id="weight" type="number" inputmode="decimal" placeholder="e.g., 20">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="prebun">Pre-BUN (mmol/L)</label>
+            <input id="prebun" type="number" inputmode="decimal" placeholder="e.g., 35.7">
+          </div>
+          <div>
+            <label for="urr">Target URR (%)</label>
+            <select id="urr">
+              <option value="">--</option>
+              <option>10</option><option>20</option><option>30</option><option>40</option>
+              <option>50</option><option>60</option><option>70</option><option>80</option><option>90</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="chips" aria-label="URR quick chips">
+          <div class="chip" data-val="10">10%</div>
+          <div class="chip" data-val="20">20%</div>
+          <div class="chip" data-val="30">30%</div>
+          <div class="chip" data-val="40">40%</div>
+          <div class="chip" data-val="50">50%</div>
+          <div class="chip" data-val="60">60%</div>
+          <div class="chip" data-val="70">70%</div>
+          <div class="chip" data-val="80">80%</div>
+          <div class="chip" data-val="90">90%</div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label for="tbw">TBW factor</label>
+            <input id="tbw" type="number" inputmode="decimal" placeholder="0.60 default">
+          </div>
+          <div>
+            <label for="dialyzer">Dialyzer (Fresenius)</label>
+            <select id="dialyzer"></select>
+          </div>
+        </div>
+
+        <div id="dialyzerSpecs" class="specs" aria-live="polite">
+          <div><span>Surface area (m²):</span> <strong id="specSurface">–</strong></div>
+          <div><span>Priming volume (mL):</span> <strong id="specPrime">–</strong></div>
+          <div><span>Recommended Qb (mL/min):</span> <strong id="specQbRange">–</strong></div>
+          <div><span>Default α:</span> <strong id="specAlpha">–</strong></div>
+        </div>
+      </section>
+
+      <section class="card">
+        <label for="qb">Blood flow Qb (mL/min)</label>
+        <input id="qb" type="number" inputmode="decimal" placeholder="e.g., 100">
+        <button id="autoQb" class="btn" style="margin-top:8px">Auto-Qb = 6 × weight</button>
+
+        <div class="row" style="margin-top:10px">
+          <div>
+            <label for="qd">Dialysate flow Qd (mL/min)</label>
+            <input id="qd" type="number" inputmode="decimal" placeholder="(not used in math)">
+          </div>
+          <div>
+            <label for="alpha">Efficiency α (override)</label>
+            <input id="alpha" type="number" inputmode="decimal" placeholder="defaults to dialyzer">
+          </div>
+        </div>
+
+        <div id="banner" class="banner" aria-live="polite"></div>
+        <p class="hint">Tip: iPhone users—tap the field label or control to focus. Native selects ensure reliable touch behavior.</p>
+      </section>
+    </div>
+
+    <section class="outputs card" aria-live="polite">
+      <div class="out"><label>Dialyzer</label><div class="val" id="outDialyzer">–</div></div>
+      <div class="out"><label>Surface area (m²)</label><div class="val" id="outSurface">–</div></div>
+      <div class="out"><label>Priming volume (mL)</label><div class="val" id="outPrime">–</div></div>
+      <div class="out"><label>Recommended Qb (mL/min)</label><div class="val" id="outQbRange">–</div></div>
+      <div class="out"><label>Default α</label><div class="val" id="outAlpha">–</div></div>
+      <div class="out"><label>V (L)</label><div class="val" id="outV">–</div></div>
+      <div class="out"><label>spKt/V</label><div class="val" id="outSpktv">–</div></div>
+      <div class="out"><label>K (L/h)</label><div class="val" id="outK">–</div></div>
+      <div class="out"><label class="accent">Required time (min)</label><div class="val accent" id="outT">–</div></div>
+      <div class="out"><label>Predicted Post-BUN (mmol/L)</label><div class="val" id="outPostBun">–</div></div>
+    </section>
+
+    <div class="legend">
+      Units: Height cm, Weight kg, BUN mmol/L, Qb &amp; Qd mL/min, V L, K L/h, time <strong>minutes</strong>.<br/>
+      Formulas: spKt/V = −ln(1 − URR/100); K = α × Qb × 0.06; t(h) = (spKt/V × V) / K; t(min) = t(h) × 60.
+    </div>
+  </div>
+
+<script>
+/* Dialyzer catalog: [name, surfaceArea_m2, prime_mL, qbMin, qbMax, alphaDefault] */
+const dialyzers = [
+  ["FX Paed (0.2 m²)",0.2,18,30,100,0.70],
+  ["FX CorDiax 40 (0.6 m²)",0.6,32,50,200,0.80],
+  ["Hemoflow F3 (0.3 m²)",0.3,18,30,120,0.70],
+  ["Hemoflow F4 (0.4 m²)",0.4,28,40,150,0.75],
+  ["Hemoflow F5 (0.5 m²)",0.5,35,50,180,0.80],
+  ["Hemoflow F6 (0.6 m²)",0.6,45,60,200,0.80],
+  ["Hemoflow F7 (0.7 m²)",0.7,55,70,220,0.85],
+  ["Hemoflow F8 (0.8 m²)",0.8,65,80,240,0.85],
+  ["(low-flux) Optiflux 6L (0.6 m²)",0.6,40,60,200,0.72],
+  ["(low-flux) Optiflux 8L (0.8 m²)",0.8,55,80,240,0.74],
+  ["(low-flux) Optiflux 10L (1.0 m²)",1.0,65,100,300,0.76],
+  ["(low-flux) Optiflux 12L (1.2 m²)",1.2,75,120,350,0.78],
+  ["(low-flux) Optiflux 16L (1.6 m²)",1.6,95,140,400,0.80],
+  ["(high-flux) Optiflux 6H (0.6 m²)",0.6,40,60,200,0.82],
+  ["(high-flux) Optiflux 8H (0.8 m²)",0.8,55,80,240,0.84],
+  ["(high-flux) Optiflux 10H (1.0 m²)",1.0,65,100,300,0.86],
+  ["(high-flux) Optiflux 12H (1.2 m²)",1.2,75,120,350,0.88],
+  ["(high-flux) Optiflux 16H (1.6 m²)",1.6,95,140,400,0.90]
+];
+
+const $ = id => document.getElementById(id);
+
+const el = {
+  height:$("height"), weight:$("weight"), prebun:$("prebun"), urr:$("urr"),
+  tbw:$("tbw"), dialyzer:$("dialyzer"), qb:$("qb"), qd:$("qd"), alpha:$("alpha"),
+  outDialyzer:$("outDialyzer"), outSurface:$("outSurface"), outPrime:$("outPrime"),
+  outQbRange:$("outQbRange"), outAlpha:$("outAlpha"),
+  outV:$("outV"), outSpktv:$("outSpktv"), outK:$("outK"), outT:$("outT"),
+  outPostBun:$("outPostBun"),
+  specSurface:$("specSurface"), specPrime:$("specPrime"),
+  specQbRange:$("specQbRange"), specAlpha:$("specAlpha"),
+  banner:$("banner")
+};
+
+/* Populate dialyzer select (native for iOS Safari reliability) */
+(function initDialyzers(){
+  const blank = document.createElement("option");
+  blank.value = ""; blank.textContent = "--";
+  el.dialyzer.appendChild(blank);
+  dialyzers.forEach((d,i)=>{
+    const opt = document.createElement("option");
+    opt.value=i; opt.textContent=d[0];
+    el.dialyzer.appendChild(opt);
+  });
+})();
+
+/* Formatting helpers */
+function setText(idEl, val){ idEl.textContent = val; }
+function dashAll(ids){ ids.forEach(e=> setText(e,"–")); }
+
+/* Core recalculation */
+function recalc(){
+  const w = parseFloat(el.weight.value);
+  const preBun = parseFloat(el.prebun.value);
+  const urr = parseFloat(el.urr.value);
+  const tbw = parseFloat(el.tbw.value) || 0.60;          // default 0.60
+  const qb = parseFloat(el.qb.value);
+  const alphaOverride = parseFloat(el.alpha.value);
+  const dialIndex = el.dialyzer.value;
+
+  let dial = null;
+  if(dialIndex!==""){ dial = dialyzers[Number(dialIndex)]; }
+
+  /* Update specs panel */
+  if(dial){
+    setText(el.outDialyzer, dial[0]);
+    setText(el.outSurface, dial[1]);
+    setText(el.outPrime, dial[2]);
+    setText(el.outQbRange, `${dial[3]}–${dial[4]}`);
+    setText(el.outAlpha, dial[5]);
+
+    setText(el.specSurface, dial[1]);
+    setText(el.specPrime, dial[2]);
+    setText(el.specQbRange, `${dial[3]}–${dial[4]}`);
+    setText(el.specAlpha, dial[5]);
+  }else{
+    dashAll([el.outDialyzer, el.outSurface, el.outPrime, el.outQbRange, el.outAlpha,
+             el.specSurface, el.specPrime, el.specQbRange, el.specAlpha]);
+  }
+
+  /* Need: weight, URR, dialyzer, Qb for core math */
+  if(!w || !urr || !dial || !qb){
+    dashAll([el.outV, el.outSpktv, el.outK, el.outT, el.outPostBun]);
+    el.banner.textContent=""; el.banner.className="banner";
+    return;
+  }
+
+  /* Formulas (SI): */
+  const V = w * tbw;                                // V (L)
+  const spktv = -Math.log(1 - urr/100);             // spKt/V
+  const alpha = alphaOverride || dial[5];           // α
+  const K = alpha * qb * 0.06;                      // K (L/h) with Qb mL/min
+  const t_hours = (spktv * V) / K;                  // time in hours
+  const t_minutes = t_hours * 60;                   // minutes (requested)
+  const postBun = isFinite(preBun) ? preBun * (1 - urr/100) : null;
+
+  setText(el.outV, V.toFixed(2));
+  setText(el.outSpktv, spktv.toFixed(3));
+  setText(el.outK, K.toFixed(2));
+  setText(el.outT, isFinite(t_minutes) ? Math.round(t_minutes).toString() : "–"); // 0dp (rounded)
+  setText(el.outPostBun, postBun!==null ? postBun.toFixed(1) : "–");
+
+  if(urr<=30){
+    el.banner.textContent="Good first-session target (≤30% URR).";
+    el.banner.className="banner green";
+  }else{
+    el.banner.textContent="First session caution (>30% URR). Consider ~1–1.5 h and split clearance to avoid DDS.";
+    el.banner.className="banner amber";
+  }
+}
+
+/* Events: input/change for live updates; chips & button taps */
+document.querySelectorAll("input,select").forEach(elm=>{
+  elm.addEventListener("input", recalc, {passive:true});
+  elm.addEventListener("change", recalc, {passive:true});
+});
+document.querySelectorAll(".chip").forEach(chip=>{
+  chip.addEventListener("click", ()=>{
+    el.urr.value = chip.dataset.val;
+    recalc();
+  }, {passive:true});
+});
+$("autoQb").addEventListener("click", ()=>{
+  const w = parseFloat(el.weight.value);
+  if(w){ el.qb.value = Math.round(6*w); recalc(); }
+}, {passive:true});
+
+/* Initial draw */
+recalc();
+
+/* Sanity (manual): 
+   Weight 20, TBW blank => V=12.00; URR 30% => spKt/V ≈0.357; FX Paed α=0.70, Qb=100 => K=4.20 L/h; 
+   t_hours≈1.02 => t_minutes≈61; Pre-BUN 35.7, URR 30% => Post≈25.0; URR 40% => warning.
+*/
+</script>
+</body>
+</html>
