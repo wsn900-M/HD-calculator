@@ -1,0 +1,11 @@
+# Compiled output
+*.elf
+*.o
+*.a
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+*.swp
