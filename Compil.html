@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PS2 Compiler — Nova Build</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+–bg: #0a0a0f;
+–surface: #111118;
+–surface2: #16161f;
+–border: #1e1e2e;
+–border2: #2a2a3e;
+–accent: #0071e3;
+–accent2: #34aadc;
+–accent-glow: rgba(0,113,227,0.25);
+–green: #30d158;
+–green-glow: rgba(48,209,88,0.2);
+–red: #ff453a;
+–yellow: #ffd60a;
+–text: #f0f0f5;
+–text2: #8e8ea0;
+–text3: #4a4a5a;
+–radius: 14px;
+–radius-sm: 8px;
+}
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘Syne’, sans-serif;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* Background grid */
+body::before {
+content: ‘’;
+position: fixed;
+inset: 0;
+background-image:
+linear-gradient(rgba(0,113,227,0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,113,227,0.03) 1px, transparent 1px);
+background-size: 40px 40px;
+pointer-events: none;
+z-index: 0;
+}
+
+/* Glow orb */
+body::after {
+content: ‘’;
+position: fixed;
+top: -200px;
+left: 50%;
+transform: translateX(-50%);
+width: 800px;
+height: 500px;
+background: radial-gradient(ellipse, rgba(0,113,227,0.08) 0%, transparent 70%);
+pointer-events: none;
+z-index: 0;
+}
+
+.container {
+max-width: 780px;
+margin: 0 auto;
+padding: 60px 24px 80px;
+position: relative;
+z-index: 1;
+}
+
+/* Header */
+.header {
+text-align: center;
+margin-bottom: 56px;
+animation: fadeUp 0.6s ease both;
+}
+
+.badge {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+background: rgba(0,113,227,0.1);
+border: 1px solid rgba(0,113,227,0.2);
+border-radius: 100px;
+padding: 6px 14px;
+font-size: 11px;
+font-weight: 600;
+color: var(–accent2);
+letter-spacing: 1.5px;
+text-transform: uppercase;
+margin-bottom: 20px;
+}
+
+.badge-dot {
+width: 6px;
+height: 6px;
+background: var(–accent);
+border-radius: 50%;
+animation: pulse 2s infinite;
+}
+
+h1 {
+font-size: clamp(36px, 6vw, 56px);
+font-weight: 800;
+line-height: 1.05;
+letter-spacing: -1.5px;
+margin-bottom: 14px;
+background: linear-gradient(135deg, #ffffff 0%, #8e8ea0 100%);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+}
+
+.subtitle {
+font-size: 15px;
+color: var(–text2);
+line-height: 1.6;
+max-width: 440px;
+margin: 0 auto;
+font-weight: 400;
+}
+
+/* Steps indicator */
+.steps {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 0;
+margin-bottom: 40px;
+animation: fadeUp 0.6s 0.1s ease both;
+}
+
+.step {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 6px;
+}
+
+.step-num {
+width: 32px;
+height: 32px;
+border-radius: 50%;
+background: var(–surface2);
+border: 1.5px solid var(–border2);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 12px;
+font-weight: 700;
+color: var(–text3);
+transition: all 0.3s;
+}
+
+.step.active .step-num {
+background: var(–accent);
+border-color: var(–accent);
+color: white;
+box-shadow: 0 0 20px var(–accent-glow);
+}
+
+.step.done .step-num {
+background: var(–green);
+border-color: var(–green);
+color: white;
+}
+
+.step-label {
+font-size: 10px;
+color: var(–text3);
+font-weight: 600;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+white-space: nowrap;
+}
+
+.step.active .step-label { color: var(–accent2); }
+.step.done .step-label { color: var(–green); }
+
+.step-line {
+width: 60px;
+height: 1.5px;
+background: var(–border2);
+margin-bottom: 18px;
+transition: background 0.3s;
+}
+
+.step-line.done { background: var(–green); }
+
+/* Cards */
+.card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 28px;
+margin-bottom: 16px;
+animation: fadeUp 0.6s 0.2s ease both;
+transition: border-color 0.3s;
+}
+
+.card:hover { border-color: var(–border2); }
+
+.card-header {
+display: flex;
+align-items: center;
+gap: 12px;
+margin-bottom: 20px;
+}
+
+.card-icon {
+width: 38px;
+height: 38px;
+border-radius: 10px;
+background: rgba(0,113,227,0.1);
+border: 1px solid rgba(0,113,227,0.2);
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 17px;
+flex-shrink: 0;
+}
+
+.card-title {
+font-size: 16px;
+font-weight: 700;
+color: var(–text);
+letter-spacing: -0.3px;
+}
+
+.card-desc {
+font-size: 12px;
+color: var(–text2);
+margin-top: 2px;
+}
+
+/* Token input */
+.input-wrap {
+position: relative;
+}
+
+.input-wrap input {
+width: 100%;
+background: var(–surface2);
+border: 1.5px solid var(–border2);
+border-radius: var(–radius-sm);
+padding: 13px 46px 13px 16px;
+font-size: 13px;
+font-family: ‘DM Mono’, monospace;
+color: var(–text);
+outline: none;
+transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-wrap input:focus {
+border-color: var(–accent);
+box-shadow: 0 0 0 3px var(–accent-glow);
+}
+
+.input-wrap input::placeholder { color: var(–text3); }
+
+.input-toggle {
+position: absolute;
+right: 14px;
+top: 50%;
+transform: translateY(-50%);
+background: none;
+border: none;
+cursor: pointer;
+font-size: 16px;
+color: var(–text3);
+transition: color 0.2s;
+}
+
+.input-toggle:hover { color: var(–text2); }
+
+.input-hint {
+font-size: 11px;
+color: var(–text3);
+margin-top: 8px;
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+.input-hint a {
+color: var(–accent2);
+text-decoration: none;
+}
+
+.input-hint a:hover { text-decoration: underline; }
+
+/* Repo name */
+.repo-row {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 12px;
+}
+
+.field-label {
+font-size: 11px;
+font-weight: 600;
+color: var(–text2);
+letter-spacing: 0.5px;
+text-transform: uppercase;
+margin-bottom: 7px;
+}
+
+.field input, .field select {
+width: 100%;
+background: var(–surface2);
+border: 1.5px solid var(–border2);
+border-radius: var(–radius-sm);
+padding: 12px 14px;
+font-size: 13px;
+font-family: ‘DM Mono’, monospace;
+color: var(–text);
+outline: none;
+transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field input:focus, .field select:focus {
+border-color: var(–accent);
+box-shadow: 0 0 0 3px var(–accent-glow);
+}
+
+.field select option { background: var(–surface2); }
+
+/* Drop zone */
+.dropzone {
+border: 2px dashed var(–border2);
+border-radius: var(–radius);
+padding: 40px 24px;
+text-align: center;
+cursor: pointer;
+transition: all 0.25s;
+position: relative;
+}
+
+.dropzone:hover, .dropzone.dragover {
+border-color: var(–accent);
+background: rgba(0,113,227,0.04);
+}
+
+.dropzone input[type=“file”] {
+position: absolute;
+inset: 0;
+opacity: 0;
+cursor: pointer;
+width: 100%;
+height: 100%;
+}
+
+.drop-icon {
+font-size: 36px;
+margin-bottom: 12px;
+display: block;
+}
+
+.drop-title {
+font-size: 15px;
+font-weight: 700;
+color: var(–text);
+margin-bottom: 6px;
+}
+
+.drop-sub {
+font-size: 12px;
+color: var(–text2);
+}
+
+.drop-sub span {
+color: var(–accent2);
+font-weight: 600;
+}
+
+.upload-btn-label {
+display: inline-flex;
+align-items: center;
+gap: 6px;
+padding: 10px 20px;
+background: var(–accent);
+border-radius: var(–radius-sm);
+font-size: 13px;
+font-weight: 700;
+color: white;
+cursor: pointer;
+transition: all 0.2s;
+user-select: none;
+}
+
+.upload-btn-label:hover {
+background: #0077ed;
+transform: translateY(-1px);
+box-shadow: 0 4px 16px var(–accent-glow);
+}
+
+.upload-btn-label.secondary {
+background: var(–surface2);
+border: 1.5px solid var(–border2);
+color: var(–text2);
+}
+
+.upload-btn-label.secondary:hover {
+border-color: var(–accent);
+color: var(–text);
+background: rgba(0,113,227,0.08);
+box-shadow: none;
+}
+
+/* File list */
+.file-list {
+margin-top: 16px;
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+.file-item {
+display: flex;
+align-items: center;
+gap: 10px;
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+padding: 10px 14px;
+animation: fadeUp 0.3s ease both;
+}
+
+.file-item-icon {
+font-size: 14px;
+flex-shrink: 0;
+}
+
+.file-item-name {
+font-size: 12px;
+font-family: ‘DM Mono’, monospace;
+color: var(–text);
+flex: 1;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.file-item-size {
+font-size: 11px;
+color: var(–text3);
+font-family: ‘DM Mono’, monospace;
+}
+
+.file-item-remove {
+background: none;
+border: none;
+cursor: pointer;
+color: var(–text3);
+font-size: 14px;
+padding: 2px 4px;
+border-radius: 4px;
+transition: all 0.15s;
+}
+
+.file-item-remove:hover {
+color: var(–red);
+background: rgba(255,69,58,0.1);
+}
+
+/* Build button */
+.build-btn {
+width: 100%;
+padding: 16px;
+background: var(–accent);
+border: none;
+border-radius: var(–radius-sm);
+font-family: ‘Syne’, sans-serif;
+font-size: 15px;
+font-weight: 700;
+color: white;
+cursor: pointer;
+transition: all 0.2s;
+letter-spacing: -0.2px;
+position: relative;
+overflow: hidden;
+margin-top: 8px;
+}
+
+.build-btn::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);
+pointer-events: none;
+}
+
+.build-btn:hover:not(:disabled) {
+background: #0077ed;
+transform: translateY(-1px);
+box-shadow: 0 8px 30px rgba(0,113,227,0.4);
+}
+
+.build-btn:active:not(:disabled) { transform: translateY(0); }
+
+.build-btn:disabled {
+opacity: 0.4;
+cursor: not-allowed;
+transform: none;
+}
+
+/* Progress */
+.progress-card {
+display: none;
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 28px;
+margin-bottom: 16px;
+animation: fadeUp 0.4s ease both;
+}
+
+.progress-card.visible { display: block; }
+
+.progress-title {
+font-size: 15px;
+font-weight: 700;
+margin-bottom: 20px;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.spinner {
+width: 16px;
+height: 16px;
+border: 2px solid var(–border2);
+border-top-color: var(–accent);
+border-radius: 50%;
+animation: spin 0.8s linear infinite;
+flex-shrink: 0;
+}
+
+.log-terminal {
+background: #080810;
+border: 1px solid var(–border);
+border-radius: var(–radius-sm);
+padding: 16px;
+font-family: ‘DM Mono’, monospace;
+font-size: 12px;
+line-height: 1.7;
+max-height: 200px;
+overflow-y: auto;
+margin-bottom: 16px;
+}
+
+.log-line {
+display: flex;
+gap: 10px;
+animation: fadeUp 0.2s ease both;
+}
+
+.log-time { color: var(–text3); flex-shrink: 0; }
+.log-text { color: #a0ffa0; }
+.log-text.info { color: var(–accent2); }
+.log-text.warn { color: var(–yellow); }
+.log-text.error { color: var(–red); }
+.log-text.success { color: var(–green); }
+
+.progress-bar-wrap {
+height: 4px;
+background: var(–border);
+border-radius: 4px;
+overflow: hidden;
+margin-bottom: 10px;
+}
+
+.progress-bar-fill {
+height: 100%;
+background: linear-gradient(90deg, var(–accent), var(–accent2));
+border-radius: 4px;
+width: 0%;
+transition: width 0.5s ease;
+}
+
+.progress-label {
+font-size: 11px;
+color: var(–text2);
+text-align: right;
+}
+
+/* Result card */
+.result-card {
+display: none;
+border-radius: var(–radius);
+padding: 28px;
+margin-bottom: 16px;
+animation: fadeUp 0.4s ease both;
+text-align: center;
+}
+
+.result-card.success {
+display: block;
+background: rgba(48,209,88,0.06);
+border: 1px solid rgba(48,209,88,0.2);
+}
+
+.result-card.error {
+display: block;
+background: rgba(255,69,58,0.06);
+border: 1px solid rgba(255,69,58,0.2);
+}
+
+.result-icon { font-size: 44px; margin-bottom: 12px; }
+
+.result-title {
+font-size: 20px;
+font-weight: 800;
+letter-spacing: -0.5px;
+margin-bottom: 6px;
+}
+
+.result-card.success .result-title { color: var(–green); }
+.result-card.error .result-title { color: var(–red); }
+
+.result-sub {
+font-size: 13px;
+color: var(–text2);
+margin-bottom: 20px;
+}
+
+.download-btn {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 13px 28px;
+background: var(–green);
+border: none;
+border-radius: var(–radius-sm);
+font-family: ‘Syne’, sans-serif;
+font-size: 14px;
+font-weight: 700;
+color: #000;
+cursor: pointer;
+text-decoration: none;
+transition: all 0.2s;
+box-shadow: 0 4px 20px var(–green-glow);
+}
+
+.download-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 8px 30px var(–green-glow);
+}
+
+.open-actions-btn {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 13px 28px;
+background: var(–accent);
+border: none;
+border-radius: var(–radius-sm);
+font-family: ‘Syne’, sans-serif;
+font-size: 14px;
+font-weight: 700;
+color: white;
+cursor: pointer;
+text-decoration: none;
+transition: all 0.2s;
+margin-left: 10px;
+}
+
+.open-actions-btn:hover {
+background: #0077ed;
+transform: translateY(-2px);
+}
+
+/* Info box */
+.info-box {
+background: rgba(0,113,227,0.06);
+border: 1px solid rgba(0,113,227,0.15);
+border-radius: var(–radius-sm);
+padding: 14px 16px;
+font-size: 12px;
+color: var(–text2);
+line-height: 1.6;
+margin-top: 12px;
+display: flex;
+gap: 10px;
+align-items: flex-start;
+}
+
+.info-box-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* Reset btn */
+.reset-btn {
+background: none;
+border: 1px solid var(–border2);
+border-radius: var(–radius-sm);
+padding: 10px 20px;
+font-family: ‘Syne’, sans-serif;
+font-size: 13px;
+font-weight: 600;
+color: var(–text2);
+cursor: pointer;
+transition: all 0.2s;
+margin-top: 12px;
+}
+
+.reset-btn:hover {
+border-color: var(–text2);
+color: var(–text);
+}
+
+/* Animations */
+@keyframes fadeUp {
+from { opacity: 0; transform: translateY(16px); }
+to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; transform: scale(1); }
+50%       { opacity: 0.5; transform: scale(0.8); }
+}
+
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+
+/* Scrollbar */
+.log-terminal::-webkit-scrollbar { width: 4px; }
+.log-terminal::-webkit-scrollbar-track { background: transparent; }
+.log-terminal::-webkit-scrollbar-thumb { background: var(–border2); border-radius: 4px; }
+
+/* Token valid indicator */
+.token-status {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+font-size: 11px;
+font-weight: 600;
+margin-top: 8px;
+padding: 4px 10px;
+border-radius: 100px;
+opacity: 0;
+transition: opacity 0.3s;
+}
+
+.token-status.valid {
+background: rgba(48,209,88,0.1);
+color: var(–green);
+opacity: 1;
+}
+
+.token-status.invalid {
+background: rgba(255,69,58,0.1);
+color: var(–red);
+opacity: 1;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+
+  <div class="header">
+    <div class="badge"><span class="badge-dot"></span> PS2 Build Tool</div>
+    <h1>One-Click<br>PS2 Compiler</h1>
+    <p class="subtitle">Drop your source files, enter your GitHub token, and get a compiled <code style="font-family:'DM Mono';color:#34aadc;font-size:13px;">.ELF</code> file ready for your PS2.</p>
+  </div>
+
+  <!-- Steps -->
+
+  <div class="steps" id="stepsBar">
+    <div class="step active" id="step1">
+      <div class="step-num">1</div>
+      <div class="step-label">Token</div>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step" id="step2">
+      <div class="step-num">2</div>
+      <div class="step-label">Files</div>
+    </div>
+    <div class="step-line" id="line2"></div>
+    <div class="step" id="step3">
+      <div class="step-num">3</div>
+      <div class="step-label">Build</div>
+    </div>
+    <div class="step-line" id="line3"></div>
+    <div class="step" id="step4">
+      <div class="step-num">4</div>
+      <div class="step-label">Download</div>
+    </div>
+  </div>
+
+  <!-- Step 1: GitHub Token -->
+
+  <div class="card" id="cardToken">
+    <div class="card-header">
+      <div class="card-icon">🔑</div>
+      <div>
+        <div class="card-title">GitHub Personal Access Token</div>
+        <div class="card-desc">Used to create the repo and trigger the build</div>
+      </div>
+    </div>
+
+```
+<div class="input-wrap">
+  <input type="password" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+  <button class="input-toggle" onclick="toggleToken()" id="tokenToggle">👁</button>
+</div>
+<div id="tokenStatus" class="token-status"></div>
+<div class="input-hint">
+  ℹ️ Need a token? <a href="https://github.com/settings/tokens/new?scopes=repo&description=PS2+Compiler" target="_blank">Generate one here</a> — make sure to check ✅ <strong>repo</strong>
+</div>
+
+<div class="repo-row" style="margin-top:16px;">
+  <div class="field">
+    <div class="field-label">Repository Name</div>
+    <input type="text" id="repoName" value="nova-launcher" placeholder="nova-launcher" />
+  </div>
+  <div class="field">
+    <div class="field-label">Visibility</div>
+    <select id="repoVisibility">
+      <option value="private">Private</option>
+      <option value="public">Public</option>
+    </select>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- Step 2: Upload Files -->
+
+  <div class="card" id="cardFiles">
+    <div class="card-header">
+      <div class="card-icon">📁</div>
+      <div>
+        <div class="card-title">Upload Source Files</div>
+        <div class="card-desc">Drop your entire project folder contents</div>
+      </div>
+    </div>
+
+```
+<div class="dropzone" id="dropzone">
+  <span class="drop-icon">📂</span>
+  <div class="drop-title">Drop your folder or files here</div>
+  <div class="drop-sub" style="margin-bottom:16px;">supports .c .h .cpp Makefile and subfolders</div>
+  <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+    <label class="upload-btn-label" for="folderInput">
+      📁 &nbsp;Select Folder
+      <input type="file" id="folderInput" webkitdirectory mozdirectory multiple style="display:none;" />
+    </label>
+    <label class="upload-btn-label secondary" for="fileInput">
+      📄 &nbsp;Select Files
+      <input type="file" id="fileInput" multiple accept=".c,.h,.cpp,.hpp,.mk,.cfg,.db,.txt,.s,.ld" style="display:none;" />
+    </label>
+  </div>
+</div>
+
+<div class="file-list" id="fileList"></div>
+
+<div class="info-box" style="margin-top:16px;">
+  <span class="info-box-icon">💡</span>
+  <span>Make sure your <strong>Makefile</strong> is included. The workflow will automatically handle the PS2DEV toolchain and compile your project.</span>
+</div>
+```
+
+  </div>
+
+  <!-- Build Button -->
+
+  <button class="build-btn" id="buildBtn" onclick="startBuild()" disabled>
+    🚀 &nbsp; Build for PS2
+  </button>
+
+  <!-- Progress -->
+
+  <div class="progress-card" id="progressCard">
+    <div class="progress-title">
+      <div class="spinner" id="progressSpinner"></div>
+      <span id="progressTitle">Initializing build pipeline...</span>
+    </div>
+    <div class="log-terminal" id="logTerminal"></div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+    <div class="progress-label" id="progressLabel">0%</div>
+  </div>
+
+  <!-- Result -->
+
+  <div class="result-card" id="resultCard">
+    <div class="result-icon" id="resultIcon"></div>
+    <div class="result-title" id="resultTitle"></div>
+    <div class="result-sub" id="resultSub"></div>
+    <div id="resultActions"></div>
+    <br>
+    <button class="reset-btn" onclick="resetAll()">🔄 Start New Build</button>
+  </div>
+
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────
+const state = {
+  token: '',
+  files: [],
+  repoName: '',
+  repoOwner: '',
+  repoCreated: false,
+  runId: null,
+  artifactUrl: null,
+  repoUrl: null,
+};
+
+// ── Token handling ────────────────────────────────────────────────────────
+function toggleToken() {
+  const inp = document.getElementById('tokenInput');
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+document.getElementById('tokenInput').addEventListener('input', function() {
+  const val = this.value.trim();
+  state.token = val;
+  const status = document.getElementById('tokenStatus');
+  if (val.startsWith('ghp_') && val.length > 20) {
+    status.className = 'token-status valid';
+    status.textContent = '✓ Token format looks valid';
+  } else if (val.length > 5) {
+    status.className = 'token-status invalid';
+    status.textContent = '✗ Should start with ghp_';
+  } else {
+    status.className = 'token-status';
+  }
+  checkReady();
+});
+
+// ── File handling ─────────────────────────────────────────────────────────
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const folderInput = document.getElementById('folderInput');
+
+// Drag over/leave
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', e => { if (!dropzone.contains(e.relatedTarget)) dropzone.classList.remove('dragover'); });
+
+// Drop — handle both folders (via DataTransferItemList) and files
+dropzone.addEventListener('drop', async e => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  const items = Array.from(e.dataTransfer.items || []);
+  const collected = [];
+
+  async function traverseEntry(entry, path = '') {
+    if (entry.isFile) {
+      await new Promise(resolve => {
+        entry.file(f => {
+          // Attach relative path for subfolder support
+          Object.defineProperty(f, 'relativePath', { value: path + f.name, writable: false });
+          collected.push(f);
+          resolve();
+        });
+      });
+    } else if (entry.isDirectory) {
+      const reader = entry.createReader();
+      await new Promise(resolve => {
+        reader.readEntries(async entries => {
+          for (const child of entries) {
+            await traverseEntry(child, path + entry.name + '/');
+          }
+          resolve();
+        });
+      });
+    }
+  }
+
+  for (const item of items) {
+    const entry = item.webkitGetAsEntry?.();
+    if (entry) await traverseEntry(entry);
+  }
+
+  if (collected.length > 0) {
+    handleFiles(collected, true);
+  } else {
+    // Fallback: plain files
+    handleFiles(Array.from(e.dataTransfer.files), false);
+  }
+});
+
+// Folder picker — preserves webkitRelativePath
+folderInput.addEventListener('change', e => {
+  handleFiles(Array.from(e.target.files), true);
+});
+
+// Individual file picker
+fileInput.addEventListener('change', e => {
+  handleFiles(Array.from(e.target.files), false);
+});
+
+function getFilePath(f) {
+  // webkitRelativePath: "foldername/src/main.c" → strip leading folder
+  if (f.webkitRelativePath) {
+    const parts = f.webkitRelativePath.split('/');
+    return parts.slice(1).join('/'); // remove top folder name
+  }
+  // Custom relativePath from drag traversal
+  if (f.relativePath) return f.relativePath;
+  return f.name;
+}
+
+function handleFiles(newFiles, hasPath) {
+  newFiles.forEach(f => {
+    const path = getFilePath(f);
+    if (!state.files.find(x => getFilePath(x) === path)) {
+      state.files.push(f);
+    }
+  });
+  renderFileList();
+  checkReady();
+}
+
+function removeFile(path) {
+  state.files = state.files.filter(f => getFilePath(f) !== path);
+  renderFileList();
+  checkReady();
+}
+
+function renderFileList() {
+  const list = document.getElementById('fileList');
+  list.innerHTML = '';
+  state.files.forEach(f => {
+    const path = getFilePath(f);
+    const name = f.name;
+    const ext = name.split('.').pop().toLowerCase();
+    const icons = { c:'📄', h:'📋', cpp:'📄', hpp:'📋', mk:'⚙️', txt:'📝', db:'🗄️', s:'📄', ld:'🔗' };
+    const icon = name === 'Makefile' ? '⚙️' : (icons[ext] || '📄');
+    const size = f.size < 1024 ? f.size + ' B' : (f.size / 1024).toFixed(1) + ' KB';
+    const displayPath = path !== name ? `<span style="color:var(--text3);font-size:10px;">${path}</span>` : '';
+    list.innerHTML += `
+      <div class="file-item">
+        <span class="file-item-icon">${icon}</span>
+        <span class="file-item-name" style="display:flex;flex-direction:column;gap:1px;">
+          <span>${name}</span>${displayPath}
+        </span>
+        <span class="file-item-size">${size}</span>
+        <button class="file-item-remove" onclick="removeFile('${path.replace(/'/g,"\\'")}')">✕</button>
+      </div>`;
+  });
+}
+
+function checkReady() {
+  const token = document.getElementById('tokenInput').value.trim();
+  const hasMakefile = state.files.some(f => f.name === 'Makefile' || getFilePath(f) === 'Makefile');
+  const hasC = state.files.some(f => f.name.endsWith('.c') || f.name.endsWith('.cpp'));
+  const ready = token.length > 10 && hasMakefile && hasC;
+  document.getElementById('buildBtn').disabled = !ready;
+}
+
+// ── Build pipeline ─────────────────────────────────────────────────────────
+function setProgress(pct, label) {
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = label || pct + '%';
+}
+
+function setProgressTitle(txt) {
+  document.getElementById('progressTitle').textContent = txt;
+}
+
+let logCount = 0;
+function log(text, type = '') {
+  const terminal = document.getElementById('logTerminal');
+  const now = new Date();
+  const time = now.toTimeString().slice(0,8);
+  terminal.innerHTML += `<div class="log-line"><span class="log-time">[${time}]</span><span class="log-text ${type}">${text}</span></div>`;
+  terminal.scrollTop = terminal.scrollHeight;
+  logCount++;
+}
+
+function updateStep(n) {
+  for (let i = 1; i <= 4; i++) {
+    const s = document.getElementById('step' + i);
+    s.className = 'step' + (i < n ? ' done' : i === n ? ' active' : '');
+  }
+  for (let i = 1; i <= 3; i++) {
+    const l = document.getElementById('line' + i);
+    l.className = 'step-line' + (i < n ? ' done' : '');
+  }
+}
+
+async function apiCall(method, url, body) {
+  const opts = {
+    method,
+    headers: {
+      'Authorization': `Bearer ${state.token}`,
+      'Accept': 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json'
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(url, opts);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || `HTTP ${res.status}`);
+  return data;
+}
+
+function toBase64(str) { return btoa(unescape(encodeURIComponent(str))); }
+
+async function readFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.onerror = reject;
+    reader.readAsText(file);
+  });
+}
+
+// The GitHub Actions workflow YAML
+const WORKFLOW_YAML = `name: Build PS2 ELF
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Pull PS2DEV
+        run: docker pull ps2dev/ps2dev:latest
+      - name: Compile
+        run: |
+          docker run --rm \\
+            -v \${{ github.workspace }}:/src \\
+            -w /src \\
+            ps2dev/ps2dev:latest \\
+            bash -c "make clean && make"
+      - name: Upload ELF
+        uses: actions/upload-artifact@v4
+        with:
+          name: ps2-elf
+          path: "*.elf"
+          retention-days: 30
+`;
+
+async function startBuild() {
+  // Setup
+  document.getElementById('buildBtn').disabled = true;
+  document.getElementById('progressCard').classList.add('visible');
+  document.getElementById('logTerminal').innerHTML = '';
+  state.token = document.getElementById('tokenInput').value.trim();
+  state.repoName = document.getElementById('repoName').value.trim() || 'nova-launcher';
+  const isPrivate = document.getElementById('repoVisibility').value === 'private';
+
+  try {
+    // ── Step 1: Get user info ───────────────────────────────────────────
+    updateStep(1);
+    setProgressTitle('Authenticating with GitHub...');
+    setProgress(5, 'Connecting...');
+    log('Verifying GitHub token...', 'info');
+
+    const user = await apiCall('GET', 'https://api.github.com/user');
+    state.repoOwner = user.login;
+    log(`✓ Authenticated as @${user.login}`, 'success');
+    setProgress(15, 'Authenticated');
+
+    // ── Step 2: Create repo ─────────────────────────────────────────────
+    updateStep(2);
+    setProgressTitle('Creating GitHub repository...');
+    log(`Creating repository: ${state.repoName}...`, 'info');
+    setProgress(20, 'Creating repo...');
+
+    // Delete if already exists (for re-runs)
+    try {
+      await apiCall('DELETE', `https://api.github.com/repos/${state.repoOwner}/${state.repoName}`);
+      log('Cleaned up existing repo', 'warn');
+      await new Promise(r => setTimeout(r, 1500));
+    } catch(e) {}
+
+    await apiCall('POST', 'https://api.github.com/user/repos', {
+      name: state.repoName,
+      private: isPrivate,
+      auto_init: false,
+      description: 'PS2 Homebrew — built with Nova PS2 Compiler'
+    });
+
+    state.repoUrl = `https://github.com/${state.repoOwner}/${state.repoName}`;
+    log(`✓ Repository created: ${state.repoUrl}`, 'success');
+    setProgress(30, 'Repo ready');
+
+    await new Promise(r => setTimeout(r, 1000));
+
+    // ── Step 3: Upload workflow ─────────────────────────────────────────
+    setProgressTitle('Setting up build workflow...');
+    log('Uploading GitHub Actions workflow...', 'info');
+    setProgress(38, 'Uploading workflow...');
+
+    await apiCall('PUT',
+      `https://api.github.com/repos/${state.repoOwner}/${state.repoName}/contents/.github/workflows/build.yml`,
+      { message: 'Add PS2 build workflow', content: toBase64(WORKFLOW_YAML) }
+    );
+
+    log('✓ Workflow file created', 'success');
+    setProgress(45, 'Workflow ready');
+
+    // ── Step 4: Upload source files ─────────────────────────────────────
+    setProgressTitle('Uploading your source files...');
+    log(`Uploading ${state.files.length} source files...`, 'info');
+
+    const total = state.files.length;
+    for (let i = 0; i < total; i++) {
+      const file = state.files[i];
+      const filePath = getFilePath(file);
+      const content = await readFile(file);
+      log(`Uploading ${filePath}...`);
+
+      await apiCall('PUT',
+        `https://api.github.com/repos/${state.repoOwner}/${state.repoName}/contents/${filePath}`,
+        { message: `Add ${filePath}`, content: toBase64(content) }
+      );
+
+      const pct = 45 + Math.round(((i + 1) / total) * 25);
+      setProgress(pct, `Uploading files ${i+1}/${total}...`);
+    }
+
+    log(`✓ All ${total} files uploaded`, 'success');
+    setProgress(72, 'Files uploaded');
+
+    // ── Step 5: Wait for workflow to trigger ────────────────────────────
+    updateStep(3);
+    setProgressTitle('Waiting for build to start...');
+    log('Waiting for GitHub Actions to trigger...', 'info');
+    setProgress(75, 'Build queued...');
+
+    await new Promise(r => setTimeout(r, 4000));
+
+    // ── Step 6: Poll for workflow run ───────────────────────────────────
+    setProgressTitle('Build in progress...');
+    log('Build started on GitHub servers ⚙️', 'info');
+    setProgress(78, 'Building...');
+
+    let attempts = 0;
+    let runStatus = null;
+    let runId = null;
+
+    while (attempts < 60) {
+      await new Promise(r => setTimeout(r, 5000));
+      attempts++;
+
+      try {
+        const runs = await apiCall('GET',
+          `https://api.github.com/repos/${state.repoOwner}/${state.repoName}/actions/runs?per_page=1`
+        );
+
+        if (runs.workflow_runs && runs.workflow_runs.length > 0) {
+          const run = runs.workflow_runs[0];
+          runId = run.id;
+          runStatus = run.status;
+          const conclusion = run.conclusion;
+
+          const pct = Math.min(78 + attempts, 93);
+          setProgress(pct, `Building... (${Math.round(attempts * 5)}s)`);
+
+          if (attempts % 3 === 0) {
+            log(`Build status: ${runStatus}${conclusion ? ' / ' + conclusion : ''}`, 'info');
+          }
+
+          if (runStatus === 'completed') {
+            if (conclusion === 'success') {
+              log('✅ Build completed successfully!', 'success');
+              setProgress(95, 'Build complete!');
+              state.runId = runId;
+              break;
+            } else {
+              throw new Error(`Build failed with conclusion: ${conclusion}. Check GitHub Actions for details.`);
+            }
+          }
+        }
+      } catch(pollErr) {
+        if (pollErr.message.includes('Build failed')) throw pollErr;
+        log(`Polling... (${pollErr.message})`, 'warn');
+      }
+    }
+
+    if (!state.runId) throw new Error('Build timed out after 5 minutes');
+
+    // ── Step 7: Get artifact download URL ──────────────────────────────
+    updateStep(4);
+    setProgressTitle('Fetching your ELF file...');
+    log('Retrieving compiled ELF artifact...', 'info');
+    setProgress(97, 'Fetching artifact...');
+
+    const artifacts = await apiCall('GET',
+      `https://api.github.com/repos/${state.repoOwner}/${state.repoName}/actions/runs/${state.runId}/artifacts`
+    );
+
+    setProgress(100, 'Done!');
+    log('🎉 ELF file ready to download!', 'success');
+
+    // Show success
+    document.getElementById('progressSpinner').style.display = 'none';
+    setProgressTitle('✅ Build successful!');
+
+    const actionsUrl = `${state.repoUrl}/actions`;
+    const artifactId = artifacts.artifacts?.[0]?.id;
+    const directDlUrl = artifactId
+      ? `https://github.com/${state.repoOwner}/${state.repoName}/actions/runs/${state.runId}/artifacts/${artifactId}`
+      : actionsUrl;
+
+    showResult('success', '🎉', 'Build Successful!',
+      `Your PS2 ELF has been compiled and is ready to download.`,
+      `<a class="download-btn" href="${directDlUrl}" target="_blank">⬇️ &nbsp; Download ELF</a>
+       <a class="open-actions-btn" href="${actionsUrl}" target="_blank">📋 &nbsp; View Build Log</a>`
+    );
+
+  } catch(err) {
+    log(`Error: ${err.message}`, 'error');
+    document.getElementById('progressSpinner').style.display = 'none';
+    setProgressTitle('❌ Build failed');
+    showResult('error', '❌', 'Build Failed',
+      err.message,
+      `<a class="open-actions-btn" href="${state.repoUrl ? state.repoUrl + '/actions' : 'https://github.com'}" target="_blank">📋 View Error Log</a>`
+    );
+  }
+}
+
+function showResult(type, icon, title, sub, actions) {
+  const card = document.getElementById('resultCard');
+  card.className = `result-card ${type}`;
+  document.getElementById('resultIcon').textContent = icon;
+  document.getElementById('resultTitle').textContent = title;
+  document.getElementById('resultSub').textContent = sub;
+  document.getElementById('resultActions').innerHTML = actions;
+}
+
+function resetAll() {
+  state.files = [];
+  state.token = '';
+  state.runId = null;
+  document.getElementById('tokenInput').value = '';
+  document.getElementById('tokenStatus').className = 'token-status';
+  document.getElementById('fileList').innerHTML = '';
+  document.getElementById('buildBtn').disabled = true;
+  document.getElementById('progressCard').classList.remove('visible');
+  document.getElementById('resultCard').className = 'result-card';
+  document.getElementById('logTerminal').innerHTML = '';
+  setProgress(0);
+  updateStep(1);
+}
+
+
+</script>
+
+</body>
+</html>
