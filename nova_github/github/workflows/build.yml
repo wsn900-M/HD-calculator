@@ -1,0 +1,53 @@
+name: Build NovaLauncher PS2 ELF
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:   # allows manual trigger from GitHub UI
+
+jobs:
+  build:
+    name: Compile for PS2
+    runs-on: ubuntu-latest
+
+    steps:
+
+      # 1. Checkout your source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Pull the official PS2DEV Docker image (has full toolchain)
+      - name: Pull PS2DEV Docker image
+        run: docker pull ps2dev/ps2dev:latest
+
+      # 3. Compile inside the Docker container
+      - name: Build ELF
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/src \
+            -w /src \
+            ps2dev/ps2dev:latest \
+            bash -c "make clean && make"
+
+      # 4. Verify the ELF was produced
+      - name: Verify output
+        run: |
+          ls -lh novalauncher.elf
+          echo "✅ Build successful!"
+
+      # 5. Upload ELF as downloadable artifact
+      - name: Upload ELF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: novalauncher-elf
+          path: novalauncher.elf
+          retention-days: 30
+
+      # 6. If this is a tagged release, also attach to GitHub Release
+      - name: Upload to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: novalauncher.elf
