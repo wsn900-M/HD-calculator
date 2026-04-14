@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C3 Glomerulopathies — PREP MCQs</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+<style>
+:root {
+  --ink:     #1C1F2E;
+  --slate:   #2D3250;
+  --mid:     #424769;
+  --coral:   #E8604C;
+  --coral-l: #FDF0EE;
+  --coral-d: #C04535;
+  --sage:    #4A7C59;
+  --sage-l:  #EAF2EB;
+  --sky:     #3B7EA1;
+  --sky-l:   #E4F2F6;
+  --gold:    #C08C3A;
+  --gold-l:  #FEF6E4;
+  --cream:   #FAF8F4;
+  --smoke:   #F0EDE8;
+  --border:  #DDD9D3;
+  --muted:   #8E8A83;
+  --light:   #C8C4BC;
+  --white:   #FFFFFF;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.site-header {
+  background: var(--slate);
+  padding: 0;
+  position: sticky; top: 0; z-index: 100;
+  border-bottom: 3px solid var(--coral);
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.header-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  color: var(--white);
+  font-weight: 700;
+  text-decoration: none;
+}
+.header-brand span { color: var(--coral); }
+.progress-wrap {
+  flex: 1; max-width: 320px;
+  margin: 0 1rem;
+}
+.progress-label {
+  font-size: 0.7rem;
+  color: var(--light);
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.06em;
+  margin-bottom: 4px;
+}
+.prog-bar-track {
+  height: 6px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.prog-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--coral), #F4956A);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+.score-badge {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.8rem;
+  color: var(--white);
+  font-weight: 600;
+  font-family: 'DM Mono', monospace;
+  white-space: nowrap;
+}
+
+/* ── HERO ── */
+.quiz-hero {
+  background: var(--slate);
+  padding: 3rem 1.5rem 2.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.quiz-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 120%, rgba(232,96,76,0.15) 0%, transparent 70%);
+}
+.hero-tag {
+  display: inline-block;
+  background: rgba(232,96,76,0.18);
+  border: 1px solid rgba(232,96,76,0.4);
+  color: #F4956A;
+  padding: 3px 14px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  font-family: 'DM Mono', monospace;
+}
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  color: var(--white);
+  margin-bottom: 0.5rem;
+}
+.hero-title span { color: var(--coral); }
+.hero-sub {
+  color: rgba(255,255,255,0.55);
+  font-size: 0.95rem;
+  max-width: 480px;
+  margin: 0 auto 1.5rem;
+  line-height: 1.6;
+}
+.hero-pills {
+  display: flex; flex-wrap: wrap;
+  gap: 0.5rem; justify-content: center;
+}
+.hero-pill {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.7);
+}
+
+/* ── FILTERS ── */
+.filter-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+.filter-btn {
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  color: var(--muted);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.filter-btn:hover { border-color: var(--coral); color: var(--coral); }
+.filter-btn.active { background: var(--coral); border-color: var(--coral); color: var(--white); }
+
+/* ── MAIN CONTENT ── */
+.quiz-container { max-width: 860px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+/* ── QUESTION CARD ── */
+.q-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  transition: box-shadow 0.25s;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: cardIn 0.4s ease forwards;
+}
+.q-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.09); }
+
+@keyframes cardIn {
+  to { opacity:1; transform:translateY(0); }
+}
+
+.q-card:nth-child(1)  { animation-delay: 0.02s; }
+.q-card:nth-child(2)  { animation-delay: 0.06s; }
+.q-card:nth-child(3)  { animation-delay: 0.10s; }
+.q-card:nth-child(4)  { animation-delay: 0.14s; }
+.q-card:nth-child(5)  { animation-delay: 0.18s; }
+.q-card:nth-child(6)  { animation-delay: 0.22s; }
+.q-card:nth-child(7)  { animation-delay: 0.26s; }
+.q-card:nth-child(8)  { animation-delay: 0.30s; }
+.q-card:nth-child(9)  { animation-delay: 0.34s; }
+.q-card:nth-child(10) { animation-delay: 0.38s; }
+.q-card:nth-child(11) { animation-delay: 0.42s; }
+.q-card:nth-child(12) { animation-delay: 0.46s; }
+.q-card:nth-child(13) { animation-delay: 0.50s; }
+.q-card:nth-child(14) { animation-delay: 0.54s; }
+.q-card:nth-child(15) { animation-delay: 0.58s; }
+.q-card:nth-child(16) { animation-delay: 0.62s; }
+.q-card:nth-child(17) { animation-delay: 0.66s; }
+.q-card:nth-child(18) { animation-delay: 0.70s; }
+.q-card:nth-child(19) { animation-delay: 0.74s; }
+.q-card:nth-child(20) { animation-delay: 0.78s; }
+
+.q-header {
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+.q-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+  margin-top: 2px;
+  letter-spacing: 0.06em;
+}
+.q-topic-tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  margin-right: 0.5rem;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.04em;
+}
+.tag-patho { background: #FDF0EE; color: var(--coral); }
+.tag-biopsy { background: #E4F2F6; color: var(--sky); }
+.tag-clinical { background: #EAF2EB; color: var(--sage); }
+.tag-diagnosis { background: #FEF6E4; color: var(--gold); }
+.tag-treatment { background: #F0EDE8; color: var(--mid); }
+.tag-prognosis { background: #EDE9FE; color: #5B21B6; }
+
+.q-text {
+  font-size: 1.0rem;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+}
+
+.q-body { padding: 1.25rem 1.5rem; }
+
+/* ── OPTIONS ── */
+.option-list { display: flex; flex-direction: column; gap: 0.5rem; }
+
+.option-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.18s;
+  background: var(--white);
+  user-select: none;
+}
+.option-item:hover:not(.revealed) {
+  border-color: var(--coral);
+  background: var(--coral-l);
+}
+.option-item.selected:not(.revealed) {
+  border-color: var(--coral);
+  background: var(--coral-l);
+}
+.option-item.correct {
+  border-color: var(--sage);
+  background: var(--sage-l);
+}
+.option-item.wrong {
+  border-color: #DC3545;
+  background: #FFF5F5;
+}
+.option-item.missed {
+  border-color: var(--sage);
+  background: rgba(74,124,89,0.06);
+  border-style: dashed;
+}
+
+.option-letter {
+  width: 28px; height: 28px; min-width: 28px;
+  border-radius: 8px;
+  background: var(--smoke);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  transition: all 0.18s;
+}
+.option-item:hover:not(.revealed) .option-letter { background: var(--coral); color: var(--white); }
+.option-item.selected:not(.revealed) .option-letter { background: var(--coral); color: var(--white); }
+.option-item.correct .option-letter { background: var(--sage); color: var(--white); }
+.option-item.wrong .option-letter { background: #DC3545; color: var(--white); }
+.option-item.missed .option-letter { background: var(--sage); color: var(--white); }
+
+.option-text {
+  font-size: 0.93rem;
+  color: var(--ink);
+  line-height: 1.5;
+  flex: 1;
+  padding-top: 3px;
+}
+.option-icon {
+  margin-left: auto;
+  font-size: 1rem;
+  padding-top: 4px;
+  display: none;
+}
+.option-item.correct .option-icon,
+.option-item.wrong .option-icon,
+.option-item.missed .option-icon { display: block; }
+.option-item.correct .option-icon { color: var(--sage); }
+.option-item.wrong .option-icon { color: #DC3545; }
+.option-item.missed .option-icon { color: var(--sage); }
+
+/* ── SUBMIT BTN ── */
+.q-footer {
+  padding: 0 1.5rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.btn-submit {
+  background: var(--coral);
+  color: var(--white);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-submit:hover:not(:disabled) { background: var(--coral-d); transform: translateY(-1px); }
+.btn-submit:disabled { opacity: 0.45; cursor: default; transform: none; }
+.btn-reveal {
+  background: var(--smoke);
+  color: var(--muted);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-reveal:hover { border-color: var(--mid); color: var(--mid); }
+
+/* ── EXPLANATION ── */
+.explanation {
+  margin: 0.75rem 1.5rem 0;
+  padding: 1rem 1.25rem;
+  background: #F8FBFF;
+  border: 1px solid #DBEAFE;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: var(--mid);
+  line-height: 1.7;
+  display: none;
+  border-left: 4px solid var(--sky);
+}
+.explanation.show { display: block; animation: fadeIn 0.3s ease; }
+.explanation strong { color: var(--slate); }
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
+
+.explanation .key-fact {
+  display: inline-block;
+  background: #DBEAFE;
+  color: var(--sky);
+  padding: 1px 8px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  font-family: 'DM Mono', monospace;
+  margin: 0 2px;
+}
+
+/* ── RESULT STATUS ── */
+.result-status {
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: none;
+  font-family: 'DM Mono', monospace;
+}
+.result-status.correct { background: var(--sage-l); color: var(--sage); display: inline-block; }
+.result-status.wrong { background: #FFF5F5; color: #DC3545; display: inline-block; }
+
+/* ── SCORE PANEL ── */
+.score-panel {
+  background: var(--slate);
+  border-radius: 16px;
+  padding: 2rem;
+  color: var(--white);
+  text-align: center;
+  margin-bottom: 2rem;
+  display: none;
+}
+.score-panel.show { display: block; animation: cardIn 0.5s ease forwards; }
+.score-big {
+  font-family: 'Playfair Display', serif;
+  font-size: 4rem;
+  font-weight: 900;
+  color: var(--coral);
+  line-height: 1;
+}
+.score-label { color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 0.25rem; }
+
+/* ── SUMMARY BAR ── */
+.summary-bar {
+  display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+  margin-top: 1.5rem;
+}
+.sum-item {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 10px;
+  padding: 0.75rem 1.25rem;
+  text-align: center;
+  min-width: 100px;
+}
+.sum-num { font-size: 1.8rem; font-weight: 700; color: var(--white); font-family: 'Playfair Display', serif; }
+.sum-lbl { font-size: 0.75rem; color: rgba(255,255,255,0.55); margin-top: 2px; }
+
+/* ── RESET BTN ── */
+.btn-reset {
+  background: var(--coral);
+  color: var(--white);
+  border: none;
+  border-radius: 10px;
+  padding: 0.65rem 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 1.5rem;
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-reset:hover { background: var(--coral-d); transform: translateY(-2px); }
+
+/* ── STICKY SCORE ── */
+.sticky-score {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--slate);
+  color: var(--white);
+  border-radius: 50px;
+  padding: 0.6rem 1.25rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: none;
+  z-index: 50;
+}
+.sticky-score.show { display: flex; align-items: center; gap: 0.5rem; }
+.sticky-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--coral); }
+
+/* ── CATEGORY SECTION ── */
+.cat-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--slate);
+  margin: 2.5rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--border);
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.cat-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.9rem;
+}
+
+/* ── DIFFICULTY DOT ── */
+.diff-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  display: inline-block; margin-right: 4px;
+}
+.diff-hard { background: var(--coral); }
+.diff-med  { background: var(--gold); }
+.diff-easy { background: var(--sage); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 576px) {
+  .q-header { flex-direction: column; gap: 0.5rem; }
+  .q-footer { flex-wrap: wrap; }
+  .header-inner { flex-direction: column; align-items: flex-start; }
+  .progress-wrap { max-width: 100%; margin: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-inner">
+    <a class="header-brand" href="#">C3<span>G</span> · DDD & C3GN</a>
+    <div class="progress-wrap">
+      <div class="progress-label">PROGRESS — <span id="prog-text">0 / 20 answered</span></div>
+      <div class="prog-bar-track"><div class="prog-bar-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+    <div class="score-badge">Score: <span id="header-score">0 / 0</span></div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="quiz-hero">
+  <div class="hero-tag">PREP Level · Pediatric Nephrology</div>
+  <h1 class="hero-title">C3 <span>Glomerulopathies</span></h1>
+  <p class="hero-sub">20 high-yield MCQs covering DDD, C3GN, pathogenesis, biopsy findings, treatment, and prognosis. PREP-style questions for fellows and residents.</p>
+  <div class="hero-pills">
+    <span class="hero-pill"><i class="bi bi-circle-fill" style="color:#E8604C;font-size:0.5rem;vertical-align:middle;margin-right:4px"></i>Pathogenesis</span>
+    <span class="hero-pill"><i class="bi bi-circle-fill" style="color:#3B7EA1;font-size:0.5rem;vertical-align:middle;margin-right:4px"></i>Biopsy</span>
+    <span class="hero-pill"><i class="bi bi-circle-fill" style="color:#4A7C59;font-size:0.5rem;vertical-align:middle;margin-right:4px"></i>Clinical</span>
+    <span class="hero-pill"><i class="bi bi-circle-fill" style="color:#C08C3A;font-size:0.5rem;vertical-align:middle;margin-right:4px"></i>Diagnosis</span>
+    <span class="hero-pill"><i class="bi bi-circle-fill" style="color:#424769;font-size:0.5rem;vertical-align:middle;margin-right:4px"></i>Treatment</span>
+    <span class="hero-pill"><i class="bi bi-circle-fill" style="color:#5B21B6;font-size:0.5rem;vertical-align:middle;margin-right:4px"></i>Prognosis</span>
+  </div>
+</section>
+
+<!-- FILTER BAR -->
+<div class="filter-bar" id="filter-bar">
+  <button class="filter-btn active" data-filter="all">All (20)</button>
+  <button class="filter-btn" data-filter="patho">Pathogenesis</button>
+  <button class="filter-btn" data-filter="biopsy">Biopsy</button>
+  <button class="filter-btn" data-filter="clinical">Clinical</button>
+  <button class="filter-btn" data-filter="diagnosis">Diagnosis</button>
+  <button class="filter-btn" data-filter="treatment">Treatment</button>
+  <button class="filter-btn" data-filter="prognosis">Prognosis</button>
+</div>
+
+<!-- SCORE PANEL -->
+<div class="quiz-container">
+  <div class="score-panel" id="score-panel">
+    <div class="score-big" id="final-score-num">—</div>
+    <div class="score-label">out of 20 correct</div>
+    <div class="summary-bar">
+      <div class="sum-item"><div class="sum-num" id="sum-correct">0</div><div class="sum-lbl">Correct</div></div>
+      <div class="sum-item"><div class="sum-num" id="sum-wrong">0</div><div class="sum-lbl">Incorrect</div></div>
+      <div class="sum-item"><div class="sum-num" id="sum-pct">0%</div><div class="sum-lbl">Score</div></div>
+    </div>
+    <button class="btn-reset" onclick="resetAll()"><i class="bi bi-arrow-counterclockwise me-2"></i>Retake Quiz</button>
+  </div>
+
+<!-- QUESTIONS -->
+<div id="questions-wrap"></div>
+
+</div><!-- /quiz-container -->
+
+<!-- STICKY SCORE -->
+<div class="sticky-score" id="sticky-score">
+  <span class="sticky-dot"></span>
+  <span id="sticky-text">0 / 0 correct</span>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+const QUESTIONS = [
+  // ── PATHOGENESIS ───────────────────────────────────────
+  {
+    id: 1, category: "patho", diff: "hard",
+    text: "A 10-year-old boy presents with hematuria, proteinuria, and markedly low C3 with normal C4. Testing reveals a serum autoantibody that prolongs the half-life of the alternative pathway C3 convertase from approximately 90 seconds to over 30 minutes. Which autoantibody is responsible?",
+    options: ["Anti-C1q antibody", "C3 Nephritic Factor (C3NeF)", "Anti-double-stranded DNA antibody", "C4 Nephritic Factor (C4NeF)"],
+    correct: 1,
+    explanation: "<strong>C3 Nephritic Factor (C3NeF)</strong> is an IgG autoantibody that stabilizes the alternative pathway C3 convertase (C3bBb), dramatically prolonging its half-life. This leads to uncontrolled C3 cleavage and consumption. C3NeF is found in approximately <span class='key-fact'>80% of DDD</span> and <span class='key-fact'>40% of C3GN</span> patients. Importantly, its causality remains unresolved — it does not always correlate with disease activity."
+  },
+  {
+    id: 2, category: "patho", diff: "med",
+    text: "A 12-year-old girl with DDD is found to have markedly reduced serum Factor H levels. Genetic testing reveals a homozygous CFH mutation. What is the primary role of Factor H in the alternative complement pathway?",
+    options: [
+      "Activates the classical pathway by binding C1q",
+      "Stabilizes the membrane attack complex (C5b-9)",
+      "Promotes decay of C3/C5 convertases and facilitates inactivation of C3b by Factor I",
+      "Cleaves C5 into C5a and C5b"
+    ],
+    correct: 2,
+    explanation: "<strong>Factor H</strong> is the primary fluid-phase regulator of the alternative pathway. It: (1) directly promotes the decay of C3 and C5 convertases, and (2) combines with <span class='key-fact'>Factor I</span> to bind and rapidly inactivate free C3b. Loss of functional Factor H activity — through genetic mutations, autoantibodies, or monoclonal immunoglobulins — results in uncontrolled APC activation and C3 consumption."
+  },
+  {
+    id: 3, category: "patho", diff: "hard",
+    text: "A researcher identifies a patient with C3GN whose disease is driven by a CFHR5 internal gene duplication. What is the mechanism by which CFHR protein mutations cause complement dysregulation?",
+    options: [
+      "CFHR proteins activate the classical pathway by binding C1q",
+      "CFHR proteins directly cleave C3 into C3a and C3b",
+      "CFHR proteins compete with Factor H for C3b binding but lack its regulatory function, thereby deregulating APC control",
+      "CFHR proteins stabilize the terminal complement complex C5b-9"
+    ],
+    correct: 2,
+    explanation: "CFHR proteins (complement Factor H-related proteins 1–5) are structurally related to Factor H and can compete with Factor H for binding to tissue-bound complement fragments. However, unlike Factor H, they <strong>lack regulatory activity</strong>. This competition tips the balance away from proper APC regulation. Notably, a <span class='key-fact'>CFHR5 internal duplication</span> causes C3GN of Cypriot origin, and a hybrid CFHR3-1 gene mutation causes familial C3GN in Irish families."
+  },
+  {
+    id: 4, category: "patho", diff: "med",
+    text: "Which of the following best describes why acquired partial lipodystrophy (APL) occurs in some patients with DDD?",
+    options: [
+      "Fat cell infiltration by complement deposits causes physical destruction of adipose tissue",
+      "Adipocytes produce adipsin (Factor D), which locally activates the APC; C3NeF then amplifies this activation leading to complement-mediated adipocyte lysis",
+      "Anti-lipase autoantibodies in DDD cause abnormal fat metabolism",
+      "Nephrotic syndrome in DDD leads to fat redistribution from the upper to lower body"
+    ],
+    correct: 1,
+    explanation: "<strong>Adipocytes produce adipsin (Factor D)</strong>, which is required for APC convertase assembly. Local APC activation in adipose tissue, amplified by C3NeF, leads to complement-mediated adipocyte lysis. This causes <span class='key-fact'>loss of subcutaneous fat in the upper body</span> (face → trunk → upper limbs), while the lower body is spared because lower-body adipocytes produce less adipsin. Up to <span class='key-fact'>83%</span> of APL patients have C3NeF."
+  },
+
+  // ── BIOPSY ────────────────────────────────────────────
+  {
+    id: 5, category: "biopsy", diff: "hard",
+    text: "A kidney biopsy in a 9-year-old with persistent hypocomplementemia shows strong C3 staining on immunofluorescence with absent IgG, IgA, and IgM. Electron microscopy reveals highly electron-dense, osmiophilic material that replaces and widens the glomerular basement membrane lamina densa in a ribbon-like, continuous pattern. What is the diagnosis?",
+    options: [
+      "C3 Glomerulonephritis (C3GN)",
+      "Dense Deposit Disease (DDD)",
+      "Post-infectious glomerulonephritis",
+      "Lupus nephritis class III"
+    ],
+    correct: 1,
+    explanation: "The <strong>pathognomonic finding of DDD</strong> on EM is highly electron-dense (osmiophilic), ribbon-like material that <span class='key-fact'>replaces and widens the lamina densa</span> of the GBM. This intramembranous location is the key feature distinguishing DDD from C3GN. In C3GN, deposits are subendothelial and mesangial but do NOT replace the lamina densa. The absent immunoglobulins confirm this is not an immune-complex GN."
+  },
+  {
+    id: 6, category: "biopsy", diff: "med",
+    text: "What is the minimum diagnostic criterion for C3 glomerulopathy on immunofluorescence microscopy?",
+    options: [
+      "C3 staining 1+ with absent IgG",
+      "C3 predominance of at least 2 orders of magnitude above any other immunoreactant",
+      "Bright C3 mesangial staining with 1+ IgG",
+      "Absent C3 with strong C1q and IgG staining"
+    ],
+    correct: 1,
+    explanation: "The diagnostic criterion adopted for C3 glomerulopathy is <strong>C3 predominance of at least 2 orders of magnitude (2+)</strong> by immunofluorescence compared with any other immunoreactant (IgG, IgA, IgM, C1q, C4). The <span class='key-fact'>absence of significant immunoglobulin staining</span> confirms that DDD and C3GN are NOT immune complex deposition diseases — a critical distinction from lupus nephritis and immune-complex MPGN."
+  },
+  {
+    id: 7, category: "biopsy", diff: "hard",
+    text: "A patient with an MPGN pattern on light microscopy has C3 dominant staining on immunofluorescence. The pathologist cannot perform electron microscopy. Which staining can help differentiate DDD from C3GN in this situation?",
+    options: [
+      "PAS staining to identify double contours",
+      "Apolipoprotein E (ApoE) immunostaining — positive in DDD, negative in C3GN",
+      "Fibronectin staining",
+      "Congo red staining for amyloid"
+    ],
+    correct: 1,
+    explanation: "<strong>Apolipoprotein E (ApoE) immunostaining</strong> is enriched in DDD deposits but NOT in C3GN or control cases. One study found ApoE staining could distinguish DDD from C3GN in <span class='key-fact'>81% of cases</span>. This is particularly useful when EM is not available. The pathophysiologic significance of ApoE enrichment in DDD deposits remains unclear."
+  },
+  {
+    id: 8, category: "biopsy", diff: "med",
+    text: "Subepithelial 'humps' are observed on EM of a kidney biopsy from a child with low C3 and hematuria. Which of the following is TRUE regarding this finding?",
+    options: [
+      "Subepithelial humps are pathognomonic for DDD and exclude post-infectious GN",
+      "Subepithelial humps can be seen in DDD, C3GN, and post-streptococcal GN — they do not distinguish between these diagnoses",
+      "Subepithelial humps are found exclusively in post-streptococcal GN",
+      "Subepithelial humps indicate C3GN rather than DDD"
+    ],
+    correct: 1,
+    explanation: "Subepithelial humps can be seen in <strong>both DDD and C3GN</strong>, and are identical to those present in post-streptococcal glomerulonephritis. Their presence alone therefore does <span class='key-fact'>NOT distinguish C3G from post-infectious GN</span> on EM. The key differentiating EM feature for DDD is the intramembranous ribbon-like deposits within the lamina densa. For post-infectious GN, the key is resolution of C3 within 6–8 weeks."
+  },
+
+  // ── CLINICAL ──────────────────────────────────────────
+  {
+    id: 9, category: "clinical", diff: "easy",
+    text: "A 7-year-old girl with DDD presents with bilateral loss of subcutaneous facial fat and temporal hollowing beginning 2 years ago. Urinalysis shows hematuria and proteinuria. What syndrome is this, and what is the approximate prevalence of this association in DDD?",
+    options: [
+      "Alport syndrome — caused by type IV collagen mutation",
+      "Acquired partial lipodystrophy (Barraquer-Simons syndrome) — up to 22% of APL patients develop DDD",
+      "Turner syndrome — chromosomal abnormality with renal involvement",
+      "Prader-Willi syndrome — associated with complement deficiency"
+    ],
+    correct: 1,
+    explanation: "<strong>Acquired partial lipodystrophy (APL)</strong>, also called Barraquer-Simons syndrome, is characterized by loss of subcutaneous fat in the upper half of the body. Up to <span class='key-fact'>22% of APL patients</span> are also affected by DDD, which may develop <em>years after</em> the onset of APL. 67–74% of APL patients have low C3, and up to 83% have C3NeF, highlighting the shared complement dysregulation mechanism."
+  },
+  {
+    id: 10, category: "clinical", diff: "med",
+    text: "A 13-year-old boy with biopsy-confirmed DDD has his complement studies reviewed. Which pattern is MOST consistent with DDD?",
+    options: [
+      "Low C3, low C4, normal CH50",
+      "Normal C3, low C4, low CH50",
+      "Very low C3, normal C4, low AH50, elevated sC5b-9",
+      "Low C3, low C4, positive ANA and anti-dsDNA"
+    ],
+    correct: 2,
+    explanation: "DDD is driven by <strong>alternative pathway dysregulation</strong>, so: C3 is very low (low in <span class='key-fact'>79% of DDD patients</span>), C4 is <em>normal</em> (classical pathway is not activated), AH50 is low (alternative pathway functionally impaired), and sC5b-9 is elevated in ~25% of DDD cases reflecting terminal pathway activation. Low C3 + low C4 suggests classical pathway involvement (as in lupus), and low C3 + positive ANA/anti-dsDNA would point to SLE."
+  },
+  {
+    id: 11, category: "clinical", diff: "med",
+    text: "A 14-year-old with DDD complains of difficulty reading small text. Ophthalmologic examination reveals deposits in the Bruch membrane of the retina. What is TRUE about drusen in DDD?",
+    options: [
+      "Drusen in DDD are identical to AMD drusen and carry the same prognosis",
+      "Drusen in DDD develop at a younger age than AMD drusen, infrequently cause vision loss, and share pathogenesis with GBM deposits",
+      "Drusen are only found in C3GN, not DDD",
+      "The presence of drusen indicates more severe kidney disease"
+    ],
+    correct: 1,
+    explanation: "DDD-associated <strong>drusen</strong> (basal laminar deposits in Bruch membrane) are distinct from AMD drusen: they develop at a <span class='key-fact'>much younger age</span> and infrequently lead to vision loss in children. There is no close correlation between kidney disease activity and drusen formation. The two disorders (glomerular dense deposits and retinal drusen) share a common pathogenesis — both membranes show similar electron-dense deposits. There is also a strong genetic link between AMD and Factor H gene polymorphisms."
+  },
+  {
+    id: 12, category: "clinical", diff: "med",
+    text: "Among pediatric patients with DDD, which presentation is MOST common?",
+    options: [
+      "Asymptomatic microscopic hematuria only",
+      "Nephrotic syndrome in 80% of patients",
+      "A spectrum including nephrotic syndrome (12–55%), acute nephritic syndrome (16–38%), and isolated macroscopic hematuria (21–36%)",
+      "Rapidly progressive GN in the majority"
+    ],
+    correct: 2,
+    explanation: "DDD has a <strong>highly variable clinical presentation</strong>. No single mode dominates — presentations include: nephrotic syndrome (<span class='key-fact'>12–55%</span>), acute nephritic syndrome (<span class='key-fact'>16–38%</span>), isolated macroscopic hematuria (<span class='key-fact'>21–36%</span>), microscopic hematuria + sub-nephrotic proteinuria (<span class='key-fact'>15%</span>), isolated proteinuria (<span class='key-fact'>15–41%</span>). RPGN is occasional. DDD may also be associated with sterile pyuria."
+  },
+
+  // ── DIAGNOSIS ─────────────────────────────────────────
+  {
+    id: 13, category: "diagnosis", diff: "med",
+    text: "An 11-year-old presents with hematuria and proteinuria 3 weeks after a streptococcal throat infection. Serum C3 is low and C4 is normal. What finding at 8 weeks would MOST strongly suggest C3 glomerulopathy rather than post-infectious GN?",
+    options: [
+      "Rising ASO titer at 8 weeks",
+      "Persistent low serum C3 at 8 weeks despite clinical improvement",
+      "Worsening proteinuria at 8 weeks",
+      "Development of hypertension at 8 weeks"
+    ],
+    correct: 1,
+    explanation: "The key distinguishing feature of C3G vs post-infectious GN is the <strong>persistence of low C3</strong>. In post-infectious GN (including PIGN), C3 <span class='key-fact'>normalises within 6–8 weeks</span>. Persistent low C3 beyond 8 weeks is the trigger for kidney biopsy to confirm C3G. While worsening proteinuria and hypertension are concerning for persistent disease, persistent hypocomplementemia is the most specific indicator prompting biopsy."
+  },
+  {
+    id: 14, category: "diagnosis", diff: "hard",
+    text: "A 16-year-old presents with MPGN pattern on kidney biopsy. Immunofluorescence shows dominant C3 staining with absent immunoglobulins by routine methods. However, serum protein electrophoresis reveals an IgG kappa monoclonal spike. What additional diagnostic step should be performed on the biopsy?",
+    options: [
+      "Repeat light microscopy with silver staining",
+      "Immunofluorescence on pronase-digested paraffin-embedded tissue to unmask masked monoclonal immunoglobulin deposits",
+      "Additional EM to look for dense deposits",
+      "Flow cytometry on biopsy tissue"
+    ],
+    correct: 1,
+    explanation: "Some patients with <strong>monoclonal immunoglobulin glomerular disease</strong> are misdiagnosed as C3GN because monoclonal deposits may be <em>masked</em> on routine IF. In one study, 16 patients with MPGN and negative routine IF were found to have monoclonal deposits after <span class='key-fact'>IF on pronase-digested paraffin tissue</span>. Of these, 10 were originally diagnosed with C3GN, and 8 had an underlying plasma cell dyscrasia or lymphoproliferative disorder. This step is crucial, especially in older patients."
+  },
+  {
+    id: 15, category: "diagnosis", diff: "easy",
+    text: "A 52-year-old woman is diagnosed with C3GN on kidney biopsy. Which additional evaluation is most important in ALL patients with C3GN, and especially those over 50 years?",
+    options: [
+      "24-hour urine catecholamines",
+      "Serum and urine protein electrophoresis with immunofixation and serum free light chains to screen for monoclonal gammopathy",
+      "HIV serology and hepatitis B surface antigen",
+      "Anti-GBM antibody titers"
+    ],
+    correct: 1,
+    explanation: "In ALL patients with DDD or C3GN — particularly those aged <span class='key-fact'>over 50 years</span> — monoclonal gammopathy must be excluded. Among patients aged ≥50 years with biopsy-proven C3G, <strong>65% had a monoclonal gammopathy</strong> in one series. Workup includes: serum SPEP + immunofixation, serum free light chains, and urine SPEP + immunofixation. A paraprotein may activate the alternative complement cascade and drive C3G."
+  },
+
+  // ── TREATMENT ─────────────────────────────────────────
+  {
+    id: 16, category: "treatment", diff: "hard",
+    text: "A 14-year-old with biopsy-confirmed C3GN has UPCR of 2.4 g/g and eGFR of 72 mL/min/1.73m². Serum C3 is 42 mg/dL (low). Monoclonal gammopathy has been excluded. According to current evidence-based guidelines, what is the preferred initial immunomodulatory therapy?",
+    options: [
+      "Rituximab 375 mg/m² × 4 doses IV",
+      "Eculizumab 900 mg IV weekly × 4 weeks",
+      "A complement inhibitor — either iptacopan 200 mg orally twice daily OR pegcetacoplan SC twice weekly — plus supportive measures",
+      "High-dose prednisolone alone 2 mg/kg/day"
+    ],
+    correct: 2,
+    explanation: "For <strong>moderate-to-severe C3G</strong> (proteinuria ≥1.5 g/day and/or abnormal kidney function, no RPGN), current guidance (December 2025) recommends a <span class='key-fact'>complement inhibitor as preferred first-line</span> over MMF or other agents. Options are: <em>iptacopan</em> (oral Factor B inhibitor, 200 mg BD) — Phase 3: 35% UPCR reduction; or <em>pegcetacoplan</em> (SC C3 inhibitor) — Phase 3: 68% UPCR reduction. MMF + glucocorticoids is a reasonable alternative only if complement inhibitors are unavailable. Both complement inhibitors require REMS enrollment and meningococcal vaccination."
+  },
+  {
+    id: 17, category: "treatment", diff: "med",
+    text: "A 13-year-old with DDD and serum C3 of 28 mg/dL is started on iptacopan. Before initiating therapy, which intervention is MANDATORY?",
+    options: [
+      "Liver biopsy to assess baseline hepatic function",
+      "Vaccination against Neisseria meningitidis and Streptococcus pneumoniae, plus enrollment in the FABHALTA REMS program, with antimicrobial prophylaxis for the duration of therapy",
+      "Plasmapheresis to remove C3NeF prior to starting",
+      "Bone marrow biopsy to exclude underlying plasma cell dyscrasia"
+    ],
+    correct: 1,
+    explanation: "Complement inhibitors (iptacopan, pegcetacoplan, and eculizumab) are associated with <strong>life-threatening infections caused by encapsulated bacteria</strong>. Before initiating any complement inhibitor: (1) vaccinate against <span class='key-fact'>N. meningitidis</span> and <span class='key-fact'>S. pneumoniae</span> at least 2 weeks prior; (2) enroll in the REMS program (FABHALTA REMS for iptacopan, EMPAVELI REMS for pegcetacoplan); (3) administer <span class='key-fact'>antimicrobial prophylaxis</span> for the entire duration of therapy. These requirements are non-negotiable."
+  },
+  {
+    id: 18, category: "treatment", diff: "hard",
+    text: "A 15-year-old with DDD and a confirmed homozygous CFH mutation has progressive disease despite 6 months of iptacopan followed by a switch to pegcetacoplan with no improvement. What is the next recommended management step?",
+    options: [
+      "Switch to eculizumab anti-C5 therapy immediately",
+      "Trial of plasma infusion of fresh frozen plasma (FFP) or plasma exchange, given the identified Factor H genetic defect",
+      "Add cyclophosphamide to the current complement inhibitor",
+      "Start rituximab to deplete B cells and reduce complement autoantibodies"
+    ],
+    correct: 1,
+    explanation: "For patients with <strong>refractory disease AND an identified genetic Factor H defect</strong>, the recommended approach is a trial of <span class='key-fact'>plasma infusion (FFP 10–15 mL/kg q14 days) or plasma exchange</span> — since plasma contains the missing or mutant Factor H protein. This is preferred over eculizumab in this specific scenario. Plasma exchange (with FFP, not albumin) may be preferred if there is concern about volume overload. If there is no response after 6–12 weeks, plasma therapy should be discontinued and eculizumab offered."
+  },
+
+  // ── PROGNOSIS ─────────────────────────────────────────
+  {
+    id: 19, category: "prognosis", diff: "med",
+    text: "A 10-year-old girl with DDD has been followed for 5 years. Her urine UPCR at 12 months post-diagnosis was 85 mg/mmol. Based on published prognostic data, how does this UPCR level at 12 months affect her risk of kidney failure?",
+    options: [
+      "No prognostic significance — only biopsy findings predict ESKD",
+      "UPCR <100 mg/mmol at 12 months is associated with a substantially LOWER risk of kidney failure (adjusted HR 0.21)",
+      "UPCR <100 mg/mmol at 12 months predicts rapid progression to ESKD",
+      "UPCR at 12 months only matters if initial C3 was normal"
+    ],
+    correct: 1,
+    explanation: "In a cohort of 203 C3G patients (42% progressed to ESKD over median 11 years), <span class='key-fact'>UPCR &lt;100 mg/mmol at 12 months</span> was associated with a <strong>substantially lower risk of kidney failure</strong> (adjusted HR 0.21, 95% CI 0.073–0.596). Additionally, UPCR reductions of ≥50% or ≥50 mg/mmol from diagnosis to 12 months were both associated with lower ESKD risk. These early proteinuria responses are key prognostic biomarkers."
+  },
+  {
+    id: 20, category: "prognosis", diff: "hard",
+    text: "A 12-year-old with DDD is being evaluated for kidney transplantation after reaching ESKD. The family asks about recurrence risk and whether pre-transplant immunosuppression will prevent it. What is the most accurate counseling statement?",
+    options: [
+      "DDD rarely recurs after transplantation if the patient is on adequate tacrolimus + MMF maintenance",
+      "Recurrence risk is significant; standard immunosuppression does NOT correct the underlying complement abnormality. There is no evidence that pretransplant IS (for autoantibody-mediated disease) or plasma exchange prevents recurrence. Eculizumab has been used post-transplant with variable success.",
+      "Pre-transplant plasmapheresis guarantees C3NeF removal and prevents recurrence",
+      "Combined liver-kidney transplantation is required in all DDD patients to prevent recurrence"
+    ],
+    correct: 1,
+    explanation: "<strong>Disease recurrence and graft loss are common after kidney transplantation in C3G</strong>, mostly because standard immunosuppression does not correct the underlying complement abnormality. There is <span class='key-fact'>no evidence</span> that pretransplant IS (for autoantibody-mediated disease) or plasma exchange (for regulatory factor deficiency) prevents recurrence. Eculizumab has been used for post-transplant recurrence with <em>variable success</em>. Combined liver-kidney transplant is considered only in select cases with identified CFH mutations, not all DDD patients. Patients AND potential living donors must be informed of recurrence risk."
+  }
+];
+
+// ── STATE ───────────────────────────────────────────────
+let answered   = {};  // id → { selected, correct }
+let revealed   = {};  // id → true/false
+let activeFilter = "all";
+
+// ── RENDER ──────────────────────────────────────────────
+function diffLabel(d) {
+  const map = { hard: ['diff-hard','Hard'], med: ['diff-med','Medium'], easy: ['diff-easy','Easy'] };
+  const [cls, label] = map[d] || ['diff-easy','Easy'];
+  return `<span class="diff-dot ${cls}"></span>${label}`;
+}
+
+function catLabel(c) {
+  const map = {
+    patho:     ['tag-patho','Pathogenesis'],
+    biopsy:    ['tag-biopsy','Biopsy'],
+    clinical:  ['tag-clinical','Clinical'],
+    diagnosis: ['tag-diagnosis','Diagnosis'],
+    treatment: ['tag-treatment','Treatment'],
+    prognosis: ['tag-prognosis','Prognosis'],
+  };
+  const [cls, label] = map[c] || ['tag-patho', c];
+  return `<span class="q-topic-tag ${cls}">${label}</span>`;
+}
+
+function renderQuestions() {
+  const wrap = document.getElementById('questions-wrap');
+  wrap.innerHTML = '';
+
+  const filtered = activeFilter === 'all'
+    ? QUESTIONS
+    : QUESTIONS.filter(q => q.category === activeFilter);
+
+  if (filtered.length === 0) {
+    wrap.innerHTML = '<p class="text-center text-muted py-5">No questions in this category.</p>';
+    return;
+  }
+
+  const groups = {};
+  filtered.forEach(q => {
+    if (!groups[q.category]) groups[q.category] = [];
+    groups[q.category].push(q);
+  });
+
+  const catOrder = ['patho','biopsy','clinical','diagnosis','treatment','prognosis'];
+  const catMeta = {
+    patho:     { icon:'bi-diagram-3', color:'var(--coral)',  label:'Pathogenesis' },
+    biopsy:    { icon:'bi-search',    color:'var(--sky)',    label:'Pathology & Biopsy' },
+    clinical:  { icon:'bi-activity',  color:'var(--sage)',   label:'Clinical Features' },
+    diagnosis: { icon:'bi-clipboard2-pulse', color:'var(--gold)', label:'Diagnosis & Evaluation' },
+    treatment: { icon:'bi-capsule',   color:'var(--mid)',    label:'Treatment' },
+    prognosis: { icon:'bi-graph-up',  color:'#5B21B6',       label:'Prognosis & Transplant' },
+  };
+
+  const queuesToRender = activeFilter === 'all' ? catOrder : [activeFilter];
+
+  queuesToRender.forEach(cat => {
+    if (!groups[cat]) return;
+    const meta = catMeta[cat];
+
+    const section = document.createElement('div');
+    section.innerHTML = `
+      <div class="cat-section-title">
+        <div class="cat-icon" style="background:${meta.color}18">
+          <i class="bi ${meta.icon}" style="color:${meta.color}"></i>
+        </div>
+        ${meta.label}
+        <span style="font-family:'DM Mono',monospace;font-size:0.72rem;color:var(--muted);margin-left:auto">${groups[cat].length} question${groups[cat].length>1?'s':''}</span>
+      </div>
+    `;
+    wrap.appendChild(section);
+
+    groups[cat].forEach((q, qi) => {
+      const ans = answered[q.id];
+      const isRevealed = revealed[q.id] || false;
+      const isAnswered = !!ans;
+
+      const card = document.createElement('div');
+      card.className = 'q-card';
+      card.id = `q-card-${q.id}`;
+      card.style.animationDelay = `${qi * 0.05}s`;
+
+      const optionsHTML = q.options.map((opt, oi) => {
+        const letter = ['A','B','C','D'][oi];
+        let cls = 'option-item';
+        let icon = '';
+        if (isRevealed || isAnswered) {
+          if (oi === q.correct) { cls += ' correct'; icon = '<i class="bi bi-check-circle-fill option-icon"></i>'; }
+          else if (ans && oi === ans.selected && oi !== q.correct) { cls += ' wrong'; icon = '<i class="bi bi-x-circle-fill option-icon"></i>'; }
+        } else if (isAnswered && oi === ans.selected) {
+          cls += ' selected';
+        }
+        return `
+          <div class="${cls}" data-qid="${q.id}" data-oi="${oi}" onclick="selectOption(${q.id}, ${oi})">
+            <div class="option-letter">${letter}</div>
+            <div class="option-text">${opt}</div>
+            ${icon}
+          </div>`;
+      }).join('');
+
+      const resultStatus = isAnswered
+        ? `<span class="result-status ${ans.correct ? 'correct' : 'wrong'}">${ans.correct ? '✓ Correct' : '✗ Incorrect'}</span>`
+        : '';
+
+      card.innerHTML = `
+        <div class="q-header">
+          <div>
+            <div class="q-num" style="margin-bottom:4px">${catLabel(q.category)} <span style="font-size:0.72rem;color:var(--muted)">${diffLabel(q.diff)}</span></div>
+            <p class="q-text">Q${q.id}. ${q.text}</p>
+          </div>
+        </div>
+        <div class="q-body">
+          <div class="option-list">${optionsHTML}</div>
+        </div>
+        ${(isAnswered || isRevealed) ? `<div class="explanation show" id="exp-${q.id}">${q.explanation}</div>` : `<div class="explanation" id="exp-${q.id}">${q.explanation}</div>`}
+        <div class="q-footer">
+          <button class="btn-submit" id="btn-submit-${q.id}" onclick="submitAnswer(${q.id})" ${isAnswered?'disabled':''}>
+            ${isAnswered ? (ans.correct ? '✓ Correct' : '✗ Submitted') : 'Submit Answer'}
+          </button>
+          ${!isAnswered && !isRevealed ? `<button class="btn-reveal" onclick="revealAnswer(${q.id})">Show Answer</button>` : ''}
+          ${resultStatus}
+        </div>
+      `;
+
+      wrap.appendChild(card);
+    });
+  });
+
+  updateProgress();
+}
+
+// ── INTERACTION ──────────────────────────────────────────
+function selectOption(qid, oi) {
+  if (answered[qid] || revealed[qid]) return;
+  // Deselect all, select clicked
+  document.querySelectorAll(`[data-qid="${qid}"]`).forEach(el => el.classList.remove('selected'));
+  const el = document.querySelector(`[data-qid="${qid}"][data-oi="${oi}"]`);
+  if (el) el.classList.add('selected');
+  // Store pending selection
+  if (!window.pending) window.pending = {};
+  window.pending[qid] = oi;
+}
+
+function submitAnswer(qid) {
+  const pending = window.pending || {};
+  const selected = pending[qid];
+  if (selected === undefined) {
+    // Flash the card
+    const card = document.getElementById(`q-card-${qid}`);
+    if (card) { card.style.outline = '2px solid var(--coral)'; setTimeout(()=>card.style.outline='',800); }
+    return;
+  }
+
+  const q = QUESTIONS.find(q => q.id === qid);
+  const isCorrect = selected === q.correct;
+  answered[qid] = { selected, correct: isCorrect };
+  delete pending[qid];
+
+  // Update options visually
+  document.querySelectorAll(`[data-qid="${qid}"]`).forEach((el, oi) => {
+    el.style.cursor = 'default';
+    el.onclick = null;
+    if (oi === q.correct) {
+      el.classList.remove('selected');
+      el.classList.add('correct');
+      el.querySelector('.option-icon') || el.insertAdjacentHTML('beforeend', '<i class="bi bi-check-circle-fill option-icon"></i>');
+    } else if (oi === selected && !isCorrect) {
+      el.classList.remove('selected');
+      el.classList.add('wrong');
+      el.querySelector('.option-icon') || el.insertAdjacentHTML('beforeend', '<i class="bi bi-x-circle-fill option-icon"></i>');
+    }
+  });
+
+  // Show explanation
+  const exp = document.getElementById(`exp-${qid}`);
+  if (exp) { exp.classList.add('show'); }
+
+  // Update submit button
+  const btn = document.getElementById(`btn-submit-${qid}`);
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = isCorrect ? '✓ Correct' : '✗ Submitted';
+    btn.style.background = isCorrect ? 'var(--sage)' : '#DC3545';
+  }
+
+  // Add result status
+  const footer = btn?.parentNode;
+  if (footer) {
+    const existing = footer.querySelector('.result-status');
+    if (!existing) {
+      const st = document.createElement('span');
+      st.className = `result-status ${isCorrect ? 'correct' : 'wrong'}`;
+      st.textContent = isCorrect ? '✓ Correct' : '✗ Incorrect';
+      footer.appendChild(st);
+    }
+
+    // Remove reveal button
+    const revBtn = footer.querySelector('.btn-reveal');
+    if (revBtn) revBtn.remove();
+  }
+
+  updateProgress();
+  checkAllAnswered();
+}
+
+function revealAnswer(qid) {
+  revealed[qid] = true;
+  const q = QUESTIONS.find(q => q.id === qid);
+
+  document.querySelectorAll(`[data-qid="${qid}"]`).forEach((el, oi) => {
+    el.style.cursor = 'default';
+    el.onclick = null;
+    if (oi === q.correct) {
+      el.classList.add('missed');
+      el.querySelector('.option-icon') || el.insertAdjacentHTML('beforeend', '<i class="bi bi-check-circle option-icon"></i>');
+    }
+  });
+
+  const exp = document.getElementById(`exp-${qid}`);
+  if (exp) exp.classList.add('show');
+
+  // Update footer
+  const card = document.getElementById(`q-card-${qid}`);
+  const footer = card?.querySelector('.q-footer');
+  if (footer) {
+    const revBtn = footer.querySelector('.btn-reveal');
+    if (revBtn) revBtn.remove();
+    const submitBtn = footer.querySelector('.btn-submit');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = '— Revealed'; submitBtn.style.background = 'var(--muted)'; }
+  }
+}
+
+// ── PROGRESS ────────────────────────────────────────────
+function updateProgress() {
+  const total = QUESTIONS.length;
+  const answeredCount = Object.keys(answered).length;
+  const correctCount = Object.values(answered).filter(a => a.correct).length;
+
+  document.getElementById('prog-text').textContent = `${answeredCount} / ${total} answered`;
+  document.getElementById('prog-fill').style.width = `${(answeredCount/total)*100}%`;
+  document.getElementById('header-score').textContent = `${correctCount} / ${answeredCount}`;
+
+  const sticky = document.getElementById('sticky-score');
+  const stickTxt = document.getElementById('sticky-text');
+  if (answeredCount > 0) {
+    sticky.classList.add('show');
+    stickTxt.textContent = `${correctCount} / ${answeredCount} correct`;
+  }
+}
+
+function checkAllAnswered() {
+  const answeredCount = Object.keys(answered).length;
+  if (answeredCount === QUESTIONS.length) {
+    showScorePanel();
+  }
+}
+
+function showScorePanel() {
+  const correct = Object.values(answered).filter(a => a.correct).length;
+  const total = QUESTIONS.length;
+  const wrong = total - correct;
+  const pct = Math.round((correct/total)*100);
+
+  document.getElementById('final-score-num').textContent = `${correct} / ${total}`;
+  document.getElementById('sum-correct').textContent = correct;
+  document.getElementById('sum-wrong').textContent = wrong;
+  document.getElementById('sum-pct').textContent = pct + '%';
+
+  const panel = document.getElementById('score-panel');
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetAll() {
+  answered = {};
+  revealed = {};
+  window.pending = {};
+  document.getElementById('score-panel').classList.remove('show');
+  document.getElementById('sticky-score').classList.remove('show');
+  renderQuestions();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  updateProgress();
+}
+
+// ── FILTERS ─────────────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderQuestions();
+    document.getElementById('questions-wrap').scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// ── INIT ────────────────────────────────────────────────
+renderQuestions();
+</script>
+</body>
+</html>
